@@ -59,6 +59,12 @@ module UpNext=
     let formatTalks talks =
         talks
         |> Seq.map formatTalk
+        |> (fun fts ->
+            if Seq.isEmpty fts then
+                let now = DateTime.Now
+                let noMoreTalks = sprintf "There aren't any talks coming up as of %s @ %s" (now.ToShortDateString()) (now.ToShortTimeString())
+                seq { yield noMoreTalks }
+            else fts)
 
     let talksToSlackFormat = ((getNextTalks (DateTime.Now)) >> formatTalks >>(fun talks -> String.Join("\n", talks)))
 
